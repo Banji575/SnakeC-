@@ -13,23 +13,28 @@ namespace snake
     public partial class Form1 : Form
     {
         private int rI, rJ;
-        private int dirX = 1;
-        private int dirY = 0;
+        private sbyte dirX = 1;
+        private sbyte dirY = 0;
         private int _width = 900;
         private int _height = 800;
         private int _sizeOfSide = 40;
+        private Field field;
+        private Snake snake;
+        private Fruit fruit;
+        private Color fruitColor = Color.Yellow;
+
 
         private Label scoreLabel;
 
         private int score = 0;
 
-        private PictureBox[] snake = new PictureBox[400];
+        //private PictureBox[] snake = new PictureBox[400];
 
-        private PictureBox fruit;
+ 
         public Form1()
         {
             InitializeComponent();
-            GenerateMap();
+            
             this.Width = _width;
             this.Height = _height;
             this.KeyDown += new KeyEventHandler(OKP);
@@ -40,21 +45,26 @@ namespace snake
             this.Controls.Add(scoreLabel);
 
 
-            snake[0] = new PictureBox();
+            snake = new Snake(new Size(_sizeOfSide, _sizeOfSide), new Point(200, 200));
+            Add(snake.head);
+           /* snake[0] = new PictureBox();
             snake[0].Location = new Point(200, 200);
             snake[0].Size = new Size(_sizeOfSide, _sizeOfSide);
             snake[0].BackColor = Color.Red;
-            this.Controls.Add(snake[0]);
+            this.Controls.Add(snake[0]);*/
 
             timer.Tick += new EventHandler(update);
             timer.Interval = 200;
             timer.Start();
 
-            fruit = new PictureBox();
-            fruit.Size = new Size(_sizeOfSide, _sizeOfSide);
-            fruit.BackColor = Color.Yellow;
+       
 
             GenerateFruit();
+
+            Field gameField = new Field(_width, _height, _sizeOfSide);
+
+            GenerateMap(gameField.GenerateMap());
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -62,9 +72,14 @@ namespace snake
          
         }
 
+        private void Add(IGameEntity tail)
+        {
+            this.Controls.Add(tail.element);
+        }
+
         private void EatFruit()
         {
-            if (snake[0].Location.X == rI && snake[0].Location.Y == rJ)
+/*            if (snake[0].Location.X == rI && snake[0].Location.Y == rJ)
             {
                 scoreLabel.Text = "Score" + ++score;
                 snake[score] = new PictureBox();
@@ -72,11 +87,16 @@ namespace snake
                 snake[score].BackColor = Color.Red;
                 snake[score].Size = new Size(_sizeOfSide, _sizeOfSide);
                 this.Controls.Add(snake[score]);
-            }
+            }*/
         }
 
         private void GenerateFruit()
         {
+            if (fruit == null)
+            {
+                fruit = new Fruit(new Size(_sizeOfSide, _sizeOfSide), new Point(), fruitColor);
+            }
+
             Random r = new Random();
             rI = r.Next(0, _width - _sizeOfSide);
             int tempI = rI % _sizeOfSide;
@@ -86,20 +106,9 @@ namespace snake
             int tempJ = rJ % _sizeOfSide;
             rJ -= tempJ;
 
-            fruit.Location = new Point(rI, rJ);
-            this.Controls.Add(fruit);
-        }
-
-        private void MoveSnake()
-        {
-            for (int i = score; i>= 1 ; i--)
-            {
-                Point coord = snake[i].Location;
-                Point prevCoord = snake[i - 1].Location;
-                snake[i].Location = new Point(prevCoord.X, prevCoord.Y);
-            }
-            Point headCoord = snake[0].Location;
-            snake[0].Location = new Point(headCoord.X + _sizeOfSide * dirX, headCoord.Y + _sizeOfSide * dirY);
+            fruit.setPosition(new Point(rI, rJ));
+           
+            Add(fruit);
         }
 
         private void CheckBorders()
@@ -109,7 +118,7 @@ namespace snake
 
         private void eatItSelf()
         {
-            for (int i = 1; i <=score; i++)
+     /*       for (int i = 1; i <=score; i++)
             {
                 if (snake[0].Location == snake[i].Location)
                 {
@@ -119,26 +128,14 @@ namespace snake
                         score = score - (score - i + 1);
                     }
                 }
-            }
+            }*/
         }
 
-        private void GenerateMap()
+        private void GenerateMap(PictureBox[] pics)
         {
-            for (int i = 0; i < _width / _sizeOfSide; i++)
+            for (int i = 0; i < pics.Length-1; i++)
             {
-                PictureBox pic = new PictureBox();
-                pic.BackColor = Color.Black;
-                pic.Location = new Point(0, _sizeOfSide * i);
-                pic.Size = new Size(_width - 140, 1);
-                this.Controls.Add(pic);
-            }
-            for (int i = 0; i < _height / _sizeOfSide; i++)
-            {
-                PictureBox pic = new PictureBox();
-                pic.BackColor = Color.Black;
-                pic.Location = new Point(_sizeOfSide * i, 0);
-                pic.Size = new Size(1, _height);
-                this.Controls.Add(pic);
+                this.Controls.Add(pics[i]);
             }
         }
 
@@ -167,7 +164,7 @@ namespace snake
 
         private void update(Object obj, EventArgs e)
         {
-            MoveSnake();
+            snake.Move(dirX, dirY);
             eatItSelf();
             EatFruit();
            // cube.Location = new Point(cube.Location.X + _sizeOfSide * dirX, cube.Location.Y + _sizeOfSide * dirY);
