@@ -13,6 +13,7 @@ namespace snake
         int width;
         int height;
         int sizeOfSide;
+        int padding = 100;
         public Field(int width, int height, int sizeOfSide)
         {
             this.width = width;
@@ -22,7 +23,7 @@ namespace snake
 
         public PictureBox[] GenerateMap()
         {
-            int coutMapArr = this.width / this.sizeOfSide + this.height / this.sizeOfSide;
+            int coutMapArr = this.width - padding / this.sizeOfSide + this.height / this.sizeOfSide;
 
             PictureBox[] map = new PictureBox[coutMapArr];
             

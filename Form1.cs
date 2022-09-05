@@ -47,11 +47,6 @@ namespace snake
 
             snake = new Snake(new Size(_sizeOfSide, _sizeOfSide), new Point(200, 200));
             Add(snake.head);
-           /* snake[0] = new PictureBox();
-            snake[0].Location = new Point(200, 200);
-            snake[0].Size = new Size(_sizeOfSide, _sizeOfSide);
-            snake[0].BackColor = Color.Red;
-            this.Controls.Add(snake[0]);*/
 
             timer.Tick += new EventHandler(update);
             timer.Interval = 200;
@@ -60,9 +55,7 @@ namespace snake
        
 
             GenerateFruit();
-
             Field gameField = new Field(_width, _height, _sizeOfSide);
-
             GenerateMap(gameField.GenerateMap());
 
         }
@@ -79,15 +72,22 @@ namespace snake
 
         private void EatFruit()
         {
-/*            if (snake[0].Location.X == rI && snake[0].Location.Y == rJ)
+            if (snake.head.location.X == fruit.location.X && snake.head.location.Y == fruit.location.Y)
             {
                 scoreLabel.Text = "Score" + ++score;
-                snake[score] = new PictureBox();
+                GenerateFruit();
+                SnakeTail lastElem = snake.LastElement;
+                SnakeTail newElem = snake.CreateElement(
+                    new Size(_sizeOfSide, _sizeOfSide),
+                    new Point(lastElem.location.X + _sizeOfSide * dirX, lastElem.location.Y + _sizeOfSide * dirY)
+                    );
+                Add(newElem);
+/*                snake[score] = new PictureBox();
                 snake[score].Location = new Point(snake[score - 1].Location.X + 40 * dirX, snake[score - 1].Location.Y - 40 * dirY);
                 snake[score].BackColor = Color.Red;
                 snake[score].Size = new Size(_sizeOfSide, _sizeOfSide);
-                this.Controls.Add(snake[score]);
-            }*/
+                this.Controls.Add(snake[score]);*/
+            }
         }
 
         private void GenerateFruit()
@@ -98,7 +98,7 @@ namespace snake
             }
 
             Random r = new Random();
-            rI = r.Next(0, _width - _sizeOfSide);
+            rI = r.Next(0, _width - 100 - _sizeOfSide);
             int tempI = rI % _sizeOfSide;
             rI -= tempI;
 

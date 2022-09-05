@@ -13,6 +13,7 @@ namespace snake
         public PictureBox element { get; set; }
         public Size size { get; set; }
         public Point location { get; set; }
+
         Color color { get; set; }
         
         public Fruit(Size size, Point location, Color color)
@@ -26,6 +27,7 @@ namespace snake
         public void setPosition(Point point)
         {
             element.Location = point;
+            location = point;
         }
 
         private PictureBox createFruit()
